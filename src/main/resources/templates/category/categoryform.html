@@ -1,0 +1,38 @@
+<!doctype html>
+<html layout:decorator="layout/default" th:with="currentPage='category'"
+      xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>Update category</title>
+</head>
+<body>
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="col">
+                <h4>Kategoria:</h4>
+            </div>
+            <div class="col-md-8">
+                <form action="#" th:object="${category}" th:action="@{/category/update}" method="post">
+                    <div class="form-group">
+                        <input type="hidden" th:field="*{id}" class="form-control" th:value="*{id}">
+                        <label for="name">Nazwa: </label>
+                        <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Enter Name">
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <a href="/category/list" class="btn btn-block text-white my-2" style="background-color: #6D7FCC" th:text="Cancel"></a>
+                        </div>
+                        <div class="col-3">
+                            <input type="submit" class="btn btn-block text-white my-2" style="background-color: #6D7FCC" value="OK">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/common :: scripts"/>
+</body>
+</html>

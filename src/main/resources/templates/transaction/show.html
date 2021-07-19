@@ -1,0 +1,85 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>Details</title>
+
+</head>
+<body>
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <div class="row align-items-center justify-content-center">
+        <div class="card my-5" style="width: 50rem;" th:object="${transactionInfo}">
+            <div class="card-header  text-center">
+                Transaction Cart
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+                    <tr>
+                        <th scope="row">Nr transakcji</th>
+                        <td th:text="*{transactionNumber}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Data transakcji</th>
+                        <td th:text="*{transactionDate}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Data księgowania</th>
+                        <td th:text="*{accountingDate}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Dane kontrahenta</th>
+                        <td th:text="*{counterparty.name}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Tytuł</th>
+                        <td th:text="*{title}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Szczegóły</th>
+                        <td th:text="${transactionInfo?.details}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Nr rachunku</th>
+                        <td th:text="*{accountNumber}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Bank</th>
+                        <td th:text="*{bankName}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Kwota transakcji</th>
+                        <td th:text="*{amountTransaction +' '+ currencyTransaction}"></td>
+                    </tr>
+                    <tr th:if="*{amountTransaction.isNaN()}">
+                        <th scope="row">Kwota płatności w walucie</th>
+                        <td th:text="*{amountPayment + '' +currencyPayment}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Kategoria</th>
+                        <td th:text="*{category?.name}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Podkategoria</th>
+                        <td th:text="*{subcategory?.name}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Import do BD</th>
+                        <td th:text="${#temporals.format(transactionInfo.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ostatnia aktualizacja</th>
+                        <td th:text="${#temporals.format(transactionInfo.updatedOn, 'dd MMM yyyy HH:mm')}"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer  text-center text-muted">
+                <th:block th:text="${#calendars.format(#calendars.createNow(), 'dd MMM yyyy HH:mm')}"/>
+            </div>
+            <a href="../analytics" class="btn btn-success">Wrócić</a>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/common :: scripts"/>
+</body>
+</html>

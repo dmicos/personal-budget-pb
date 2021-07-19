@@ -1,0 +1,59 @@
+<!doctype html>
+<html layout:decorator="layout/default" th:with="currentPage='subcategory'"
+      xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>add-subcategory</title>
+
+</head>
+<body>
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-8 text-left ">
+                    <h4>Lista podkategorii</h4>
+                </div>
+                <div class="col-4 text-right text-white">
+                    <a href="/subcategory/add" class="btn btn-success tect-white" style="background-color: #6D7FCC">Dodaj
+                        podkategorię</a>
+                </div>
+            </div>
+
+            <div th:switch="${subcategories}">
+                <div>
+                    <h2 th:case="null">No Subcategories yet!</h2>
+                    <div th:case="*">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th>Nazwa podkategorii</th>
+                                <th>Kategoria</th>
+                                <th>Utworzono</th>
+                                <th>Zaktualizowano</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="subcategory : ${subcategories}">
+                                <td th:text="${subcategory.name}"></td>
+                                <td th:text="${subcategory.category.name}"></td>
+                                <td th:text="${#temporals.format(subcategory?.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+                                <td th:text="${#temporals.format(subcategory?.updatedOn, 'dd MMM yyyy HH:mm')}"></td>
+                                <td><a th:href="@{/subcategory/edit/{id}(id=${subcategory.id})}"
+                                       class="btn btn-light text-white" style="background-color: #6D7FCC"><i class="far fa-edit ml-2"></i></a>
+                                    <a href="#" th:href="@{/subcategory/delete/{id}(id=${subcategory.id})}"
+                                       class="btn btn-light text-white" style="background-color: #6D7FCC"><i class="far fa-trash-alt ml-2"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/common :: scripts"/>
+</body>
+</html>

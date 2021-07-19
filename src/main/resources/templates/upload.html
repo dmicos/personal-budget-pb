@@ -1,0 +1,83 @@
+<!doctype html>
+<html layout:decorator="layout/default" th:with="upload='analytics'"
+      lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>Import CSV</title>
+</head>
+
+<body>
+
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <div class="row justify-content-center">
+
+        <form th:action="@{/upload}" method="POST" enctype="multipart/form-data">
+            <div class="custom-file mx-auto my-lg-4 p-3 shadow p-3 mb-5 bg-white rounded">
+                <input type="file" name="file" class="custom-file-input text-white" id="customFile"
+                       accept=".csv"
+                       required="required">
+                <label class="custom-file-label" for="customFile">Wybierz plik w formacie CSV</label>
+                <!--                todo Validation-->
+<!--                <span th:if="${#fields.hasErrors('file')}" th:errors="*{file}">File Error</span>-->
+            </div>
+
+            <div class="col text-center">
+                <button type="submit" class="btn btn-success text-white"  style="background-color: #6D7FCC">Wyślij</button>
+                <button type="reset" id="resetButton" class="btn btn-success ml-auto text-white"  style="background-color: #6D7FCC">Anuluj</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="row justify-content-center p-3 m-3" th:if="${fileName}">
+        <div class="card text-center" style="width: 22em">
+            <div class="card-header">
+                Plik został zaimportowany <br/>
+                <small>
+                    [(${fileName})]
+                </small>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-9">Znaleziono transakcji</dt>
+                    <dd class="col-sm-3"><span th:text="${countRecord}+${duplicates}">0</span></dd>
+                </dl>
+                <dl class="row">
+                    <dt class="col-sm-9">Wcześniej dodanych</dt>
+                    <dd class="col-sm-3">[(${duplicates})]</dd>
+                </dl>
+                <dl class="row">
+                    <dt class="col-sm-9">Nowych transakcji</dt>
+                    <dd class="col-sm-3">[(${countRecord})]</dd>
+                </dl>
+            </div>
+            <div class="card-footer text-muted">
+                <small>
+                    Czas realizacji [(${elapsedTime})] milisekund
+                </small>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<th:block th:replace="fragments/common :: scripts"/>
+<script type="application/javascript">
+
+    $('input[type="file"]').change(function (e) {
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+    });
+
+    var btn = document.getElementById('resetButton');
+    btn.addEventListener('click', function () {
+        var fileName = "Wybierz plik w formacie CSV";
+        $('.custom-file-label').html(fileName);
+    });
+
+</script>
+</body>
+</html>

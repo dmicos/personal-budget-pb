@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>add-category</title>
+
+</head>
+<body>
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <h3> Add </h3>
+    <div class="card">
+        <div class="card-body">
+            <div class="col-md-8">
+                <form action="#" th:object="${subcategory}" th:action="@{/analytics/edit-subcategory(transactionNumber = ${transactionNumber})}" method="post">
+                    <div class="form-group">
+                        <label for="subcategory">SubCategory for transaction>
+                        <select class="form-control form-control-sm" th:field="*{id}" id="subcategory">
+                            <optgroup th:each="map : ${categoriesMap}"
+                                      th:label="${map.key.getName()}">
+                                <option th:each="subc : ${map.value}"
+                                        th:value="${subc.id}"
+                                        th:selected="(${subc.id} == *{id})"
+                                        th:readonly="(${subc.id} == *{id})"
+                                        th:utext="${subc.name}">
+                                </option>
+                            </optgroup>
+                            <input type="submit" class="btn btn-primary" value="Add subcategory">
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/common :: scripts"/>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html layout:decorator="layout/default" th:with="currentPage='analytics'"
+      xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<head th:replace="fragments/common :: header(~{::title},~{::link})">
+    <title>Analytic</title>
+    <link href="../static/css/sidebar.css" th:href="@{/css/sibebar.css}" rel="stylesheet"/>
+
+</head>
+<body>
+<!-- TOP MENU-->
+<div th:replace="fragments/common :: navbar-top"></div>
+
+<!-- Sidebar  -->
+
+<div class="container py-2">
+    <!-- DATE FORM -->
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-5">
+
+        </div>
+    </div>
+    <div class="row justify-content-end py-2">
+        <div class="col-3">
+            <form class="form-inline" action="#" th:action="@{/analytics}" method="get">
+                <div class="form-group">
+<!--                    <label class="col-form-label" for="search"></label>-->
+                    <input id="search" th:placeholder="${search?: 'Szukaj...'}" name="search"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-4">
+            <div class="progress" style="height: 20px; "  th:if="${incomeExpenses.get('expenses')}!=null">
+                <div class="progress-bar bg-info" role="progressbar" th:style="'width: ' +${incomeExpenses.get('widthForExpenses')}+'%'" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" th:text="${'Wydatki: '+incomeExpenses.get('expenses')+ ' PLN'}">25%</div>
+            </div>
+            <div class="progress" style="height: 20px;" th:if="${incomeExpenses.get('income')}!=null">
+                <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' +${incomeExpenses.get('widthForIncome')}+'%'" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" th:text="${'Dochody: '+incomeExpenses.get('income')} + ' PLN'">25%</div>
+            </div>
+        </div>
+        <div class="col-5">
+            <form class="form-inline" action="#" th:action="@{''}" method="get">
+                <div class="form-group mr-auto">
+                    <label class="col-form-label" for="datepickerStat"></label>
+                    <input id="datepickerStat" th:placeholder="${dateStart?:'From date ...'}"
+                           th:value="${dateStart}" name="dateStart" width="170px"/>
+                </div>
+                <div class="form-group mr-auto">
+                    <label for="datepickerEnd"></label>
+                    <input id="datepickerEnd" th:placeholder="${dateEnd?:'To date ...'}" th:value="${dateEnd}"
+                           name="dateEnd" width="170px"/>
+                </div>
+                <div class="form-group mr-auto text-center ">
+                    <button type="submit" class="btn btn-outline-light small ml-2" style="background-color: #6D7FCC">
+                        Szukaj
+                    </button>
+                </div>
+            </form>
+        </div>
+        <script>
+            $('#datepickerStat').datepicker({uiLibrary: 'bootstrap4', format: 'yyyy-mm-dd', size: 'small'});
+            $('#datepickerEnd').datepicker({uiLibrary: 'bootstrap4', format: 'yyyy-mm-dd', size: 'small'});
+        </script>
+    </div><!-- END DATE FORM -->
+    <!-- LEFT MENU-->
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 ">
+            <!-- Sidebar -->
+            <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+
+                <!-- Bootstrap List Group -->
+                <ul class="list-group">
+                    <!--                     Separator with title -->
+                    <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                        <small>FILTER BY CATEGORY:</small>
+                    </li>
+                    <!-- /END Separator -->
+                    <!-- Menu with submenu -->
+                    <th:block th:each="cat : ${categoriesMap}"
+                              th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+
+                        <div class="btn-group" style="background-color: #7386D5">
+                            <a class="btn text-left text-white" style="width: 90%"
+                               th:href="@{${urlBuilder.replaceQueryParam('category', cat.key.id).toUriString()}}"
+                               th:text="${cat.key.name}"></a>
+                            <a th:href="${'#submenu'+cat.key.id}" data-toggle="collapse" aria-expanded="false"
+                               class="list-group align-items-start btn dropdown-toggle my-2"
+                               style="border-style: hidden; color: white">
+                                <span class="submenu-icon ml-auto"></span>
+                            </a>
+
+                        </div>
+                        <!-- Submenu content -->
+                        <div th:id="${'submenu'+cat.key.id}" class="collapse sidebar-submenu">
+                            <th:block th:each="subcat : ${cat.value}"
+                                      th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                                <a href="#" class="list-group-item list-group-item-action text-white"
+                                   style="background-color: #6D7FCC"
+                                   th:href="@{${urlBuilder.replaceQueryParam('subcategory', subcat.id).toUriString()}}">
+                                    <span class="menu-collapsed" th:text="${subcat.name}">sub.name</span>
+                                </a>
+                            </th:block>
+                        </div> <!-- END Submenu content -->
+                    </th:block><!-- Menu with submenu -->
+
+                </ul><!-- List Group END-->
+            </div><!-- sidebar-container END -->
+            <!-- LIST CATEGORIES-->
+        </div>
+
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-12">
+            <!-- TABLE -->
+            <div class="row">
+                <table class="table align-middle" style="font-size:14px;">
+                    <tr>
+                        <th><input type="checkbox" id="checkall"/></th>
+                        <th>
+                            <th:block th:text="#{th.transactionDate}">
+                            </th:block>
+                        </th>
+                        <th>
+                            <th:block th:text="#{th.title}">
+                            </th:block>
+                        </th>
+                        <th>
+                            <th:block th:text="#{th.amountPayment}">
+                            </th:block>
+                        </th>
+                        <th>
+                        </th>
+
+                    </tr>
+                    <tr th:object="${transaction}" th:each="transaction : ${transactions}">
+                        <td><input type="checkbox" class="checkthis"/></td>
+                        <td class="align-middle" th:text="*{transactionDate}">0</td>
+                        <td class="align-middle">
+                            <th:block th:text="*{counterparty.name}"/>
+                            <br>
+                            <span class="text small" th:if="*{subcategory?.category}" style="color: #293C89"
+                                  th:text="*{subcategory.category?.name + ' / '}"/>
+                            <!-- IF subcategory EXISTS -->
+                            <a class="badge badge-light" role="button" href="#" style="color:#1C295E"
+                               th:if="*{subcategory!=null}"
+                               th:href="@{/analytics/edit-subcategory(transactionNumber=*{transactionNumber})}"
+                               th:text="*{subcategory?.name}"></a>
+                            <!-- IF subcategory NOT EXISTS -->
+                            <a class="badge badge-light text-wrap" style="width: 8rem; color: #293C89;" href="#"
+                               th:unless="*{subcategory!=null}"
+                               th:href="@{/analytics/add-subcategory(transactionNumber=*{transactionNumber})}">Brak
+                                kategorii</a>
+
+                        </td>
+                        <td class="align-middle" th:text="*{amountTransaction}">
+                        <td>
+                            <a th:href="@{/analytics/details(transactionNumber=*{transactionNumber})}"
+                               class="btn btn-outline-info btn-sm" style="border-color: #6D7FCC;  color:#6D7FCC;">
+                                ?
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div> <!-- END TABLE -->
+
+
+            <!--  Pagination -->
+            <div class="row">
+                <div class="form-group col-md-1">
+                    <select class="form-control pagination" id="pageSizeSelect">
+                        <option th:each="pageSize : ${pageSizes}" th:text="${pageSize}" th:value="${pageSize}"
+                                th:selected="${pageSize} == ${selectedPageSize}"></option>
+                    </select>
+                </div>
+                <th:block
+                        th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                    <div th:if="${transactions.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:class="${transactions.number == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{${urlBuilder.replaceQueryParam('pageSize', selectedPageSize).replaceQueryParam('page',1).toUriString()}}">&#171;</a>
+                                <!--                               th:href="@{/analytics(pageSize=${selectedPageSize}, page=1)}">&#171;</a>-->
+                            </li>
+                            <li class="page-item" th:class="${transactions.number == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{${urlBuilder.replaceQueryParam('pageSize', selectedPageSize).replaceQueryParam('page',transactions.number).toUriString()}}">&larr;</a>
+                                <!--                               th:href="@{/analytics(pageSize=${selectedPageSize}, page=${transactions.number})}">&larr;</a>-->
+                            </li>
+                            <li class="page-item"
+                                th:classappend="${transactions.number == (page - 1)} ? 'active':''"
+                                th:each="page : ${#numbers.sequence(pager.getFirstPageRange(), pager.getLastPageRange())}">
+                                <a class="page-link"
+                                   th:href="@{${urlBuilder.replaceQueryParam('pageSize', selectedPageSize).replaceQueryParam('page',page).toUriString()}}"
+                                   th:text="${page}"></a>
+                                <!--                            th:href="@{/analytics(pageSize=${selectedPageSize}, page=${page})}"-->
+                            </li>
+                            <li class="page-item"
+                                th:class="${transactions.number + 1 == transactions.totalPages} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{${urlBuilder.replaceQueryParam('pageSize', selectedPageSize).replaceQueryParam('page',transactions.number + 2).toUriString()}}">&rarr;</a>
+                                <!--                               th:href="@{/analytics(pageSize=${selectedPageSize}, page=${transactions.number + 2})}">&rarr;</a>-->
+                            </li>
+                            <li class="page-item"
+                                th:class="${transactions.number + 1 == transactions.totalPages} ? disabled">
+                                <a class="page-link"
+                                   th:href="@{${urlBuilder.replaceQueryParam('pageSize', selectedPageSize).replaceQueryParam('page',transactions.totalPages).toUriString()}}">&#187;</a>
+                                <!--                               th:href="@{/analytics(pageSize=${selectedPageSize}, page=${transactions.totalPages})}">&#187;</a>-->
+                            </li>
+                        </ul>
+                    </div>
+                </th:block>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="fragments/common :: scripts"/>
+<script type="application/javascript">
+    $(document).ready(function () {
+        changePageAndSize();
+    });
+
+    function changePageAndSize() {
+        $('#pageSizeSelect').change(function (evt) {
+            window.location.replace("/analytics?pageSize=" + this.value + "&page=1");
+        });
+    }
+</script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        $("#mytable #checkall").click(function () {
+            if ($("#mytable #checkall").is(':checked')) {
+                $("#mytable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
+
+            } else {
+                $("#mytable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        $("[data-toggle=tooltip]").tooltip();
+    });
+</script>
+</body>
+</html>

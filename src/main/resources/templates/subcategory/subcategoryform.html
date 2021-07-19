@@ -1,0 +1,50 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/common :: header(~{::title},~{})">
+    <title>Update subcategory</title>
+</head>
+<body>
+<div th:replace="fragments/common :: navbar-top"></div>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="col-8 text-left ">
+                <h4>Subkategoria:</h4>
+            </div>
+            <div class="col-md-8">
+                <form action="#" th:object="${subcategory}" th:action="@{/subcategory/update}"
+                      method="post">
+                    <div class="form-group">
+                        <input type="hidden" th:field="*{id}" class="form-control" th:value="*{id}">
+                        <label for="name">Name: </label>
+                        <input type="text" th:field="*{name}" class="form-control" id="name"
+                               placeholder="Enter Name">
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label for="category">Category: </label>
+                        <select class="form-control form-control-sm" th:field="*{category}" id="category">
+                            <option th:each="c : ${categories}"
+                                    th:selected="${c.id==subcategory.category?.id}"
+                                    th:value="${c.id}"
+                                    th:utext="${c.name}">
+                            </option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></span>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-3">
+                            <a href="/subcategory/list" class="btn btn-block text-white my-2" style="background-color: #6D7FCC" th:text="Cancel"></a>
+                        </div>
+                        <div class="col-3">
+                            <input type="submit" class="btn btn-block text-white my-2" style="background-color: #6D7FCC" value="OK">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/common :: scripts"/>
+</body>
+</html>
